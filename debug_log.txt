@@ -1,0 +1,36 @@
+RAW: {"bookId":"HLNSDwAAQBAJ","title":"Lives of the Eminent Philosophers","authors":"Diogenes Laertius","thumbnail":"https://books.google.com/books/p"}
+DECODED: Array
+(
+    [bookId] => HLNSDwAAQBAJ
+    [title] => Lives of the Eminent Philosophers
+    [authors] => Diogenes Laertius
+    [thumbnail] => https://books.google.com/books/p
+)
+
+RAW: {"bookId":"HLNSDwAAQBAJ","title":"Lives of the Eminent Philosophers","authors":"Diogenes Laertius","thumbnail":"https://books.google.com/books/p"}
+DECODED: Array
+(
+    [bookId] => HLNSDwAAQBAJ
+    [title] => Lives of the Eminent Philosophers
+    [authors] => Diogenes Laertius
+    [thumbnail] => https://books.google.com/books/p
+)
+
+RAW: {"bookId":"HLNSDwAAQBAJ","title":"Lives of the Eminent Philosophers","authors":"Diogenes Laertius","thumbnail":"https://books.google.com/books/p"}
+DECODED: Array
+(
+    [bookId] => HLNSDwAAQBAJ
+    [title] => Lives of the Eminent Philosophers
+    [authors] => Diogenes Laertius
+    [thumbnail] => https://books.google.com/books/p
+)
+
+RAW: {"bookId":"2DT4DwAAQBAJ","title":"Man of Contradictions","authors":"Ben Bland","thumbnail":"https://books.google.com/books/p"}
+DECODED: Array
+(
+    [bookId] => 2DT4DwAAQBAJ
+    [title] => Man of Contradictions
+    [authors] => Ben Bland
+    [thumbnail] => https://books.google.com/books/p
+)
+

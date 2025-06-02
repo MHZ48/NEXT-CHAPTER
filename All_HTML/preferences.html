@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BookMark - Personalize Your Experience</title>
+  <link rel="stylesheet" href="../All_CSS/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  </head>
+<body style="overflow: hidden;">
+  <section class="hero-section">
+    <div class="background"></div>
+    <header class="header">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <div class="book-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" x="0px" y="0px"><path d="M57,6H56V3a3,3,0,0,0-3-3H35a6,6,0,0,0-5,2.687A6,6,0,0,0,25,0H7A3,3,0,0,0,4,3V6H3A3,3,0,0,0,0,9V48a3,3,0,0,0,3,3H18.721a20.873,20.873,0,0,0,23.814.529l7.216,7.216a4.285,4.285,0,0,0,6.006.012,4.351,4.351,0,0,0,0-6L54,51h3a3,3,0,0,0,3-3V9A3,3,0,0,0,57,6ZM50.408,42H53a2.966,2.966,0,0,0,1-.184V44a1,1,0,0,1-1,1H48.854A20.867,20.867,0,0,0,50.408,42ZM35,2H53a1,1,0,0,1,1,1V39a1,1,0,0,1-1,1H51.116A20.975,20.975,0,0,0,31,13V6A4,4,0,0,1,35,2ZM6,3A1,1,0,0,1,7,2H25a4,4,0,0,1,4,4v7.1A20.967,20.967,0,0,0,10.884,40H7a1,1,0,0,1-1-1ZM6,41.816A2.966,2.966,0,0,0,7,42h4.592a20.867,20.867,0,0,0,1.554,3H7a1,1,0,0,1-1-1ZM3,49a1,1,0,0,1-1-1V9A1,1,0,0,1,3,8H4V44a3,3,0,0,0,3,3h7.539a21.256,21.256,0,0,0,1.792,2Zm9-15A19,19,0,1,1,31,53,19.021,19.021,0,0,1,12,34ZM54.976,55.755a2.257,2.257,0,0,1-.639,1.594,2.283,2.283,0,0,1-3.16-.006l-7.009-7.009a21.173,21.173,0,0,0,3.171-3.171l7,7A2.234,2.234,0,0,1,54.976,55.755ZM58,48a1,1,0,0,1-1,1H52l-2-2h3a3,3,0,0,0,3-3V8h1a1,1,0,0,1,1,1Z"/><path d="M36.312,17.847a1,1,0,0,0-.625,1.9A15.011,15.011,0,1,1,31,19a1,1,0,0,0,0-2,16.985,16.985,0,1,0,5.312.847Z"/></svg>
+
+          </div>
+        </div>
+        <div class="logo-text">BookMark</div>
+      </div>
+    </header>
+
+    <div class="left-side">
+      <section class="content">
+        <h1 class="main-text">Help us personalize your experience better on BookMark</h1>
+        <p class="subtext">Select up to 6 topics that interest you:</p>
+
+        <form method="POST" action="save_genres.php" id="genres-form">
+          <div class="interest-list" id="interest-list"></div>
+          <div  class="d-flex align-items-end flex-column mt-auto" style="width: 100%;">
+          <button type="submit" class="nav-btn continue-btn" disabled>Continue</button>
+       </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="right-side">
+      <img src="../All_IMAGES/rightimg.png" alt="Illustration of reading preferences" />
+    </div>
+  </section>
+  <!--
+  <script>
+    const interests = [
+      "Fantasy", "Science Fiction", "Mystery", "Romance", "Thriller",
+      "Hist Fiction", "Biography", "Science", "Business", "Self-Help"
+    ];
+
+    const interestsContainer = document.getElementById('interest-list');
+    const continueBtn = document.querySelector('.continue-btn');
+    let selectedInterests = [];
+
+    interests.forEach(interest => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'interest-btn';
+      button.textContent = interest;
+
+      button.addEventListener('click', () => {
+        if (button.classList.contains('selected')) {
+          button.classList.remove('selected');
+          selectedInterests = selectedInterests.filter(i => i !== interest);
+        } else {
+          if (selectedInterests.length < 6) {
+            button.classList.add('selected');
+            selectedInterests.push(interest);
+          }
+        }
+
+        updateFormFields();
+        continueBtn.disabled = selectedInterests.length === 0;
+      });
+
+      interestsContainer.appendChild(button);
+    });
+
+    function updateFormFields() {
+      const form = document.getElementById('genres-form');
+      // إزالة الحقول القديمة
+      form.querySelectorAll('input[name="genres[]"]').forEach(e => e.remove());
+
+      // إضافة حقول مخفية لكل اختيار
+      selectedInterests.forEach(genre => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'genres[]';
+        input.value = genre;
+        form.appendChild(input);
+      });
+    }
+</script>
+-->
+<script>
+  const interestsContainer = document.getElementById('interest-list');
+const continueBtn = document.querySelector('.continue-btn');
+let selectedInterests = [];
+let currentPage = 0;
+const genresPerPage = 20;
+let pagedGenres = [];
+
+function normalizeGenre(genre) {
+  genre = genre.toLowerCase().trim();
+  if (genre.length > 3 && genre.endsWith('s')) {
+    genre = genre.slice(0, -1);
+  }
+  return genre;
+}
+
+async function fetchGenresFromMultiplePages() {
+  const categoriesSet = new Set();
+  const originalGenresMap = new Map();
+
+  for (let start = 0; start < 120; start += 40) {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=40&startIndex=${start}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.items) {
+        data.items.forEach(item => {
+          if (item.volumeInfo.categories) {
+            item.volumeInfo.categories.forEach(cat => {
+              if (cat.length <= 64) {
+                const normalized = normalizeGenre(cat);
+                if (!categoriesSet.has(normalized)) {
+                  categoriesSet.add(normalized);
+                  originalGenresMap.set(normalized, cat);
+                }
+              }
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching page', start / 40, error);
+    }
+  }
+
+  return Array.from(categoriesSet).map(norm => originalGenresMap.get(norm));
+}
+
+function animateGenresUpdate(newButtons) {
+  interestsContainer.style.transition = 'opacity 0.5s';
+  interestsContainer.style.opacity = 0;
+  setTimeout(() => {
+    interestsContainer.innerHTML = '';
+    newButtons.forEach(btn => interestsContainer.appendChild(btn));
+    interestsContainer.style.opacity = 1;
+  }, 500);
+}
+
+function updateButtonStates() {
+  // Update all buttons across all pages to reflect current selection state
+  const allButtons = document.querySelectorAll('.interest-btn:not(.nav-btn)');
+  allButtons.forEach(button => {
+    const isSelected = selectedInterests.includes(button.textContent);
+    const shouldBeDisabled = !isSelected && selectedInterests.length >= 6;
+    
+    if (isSelected) {
+      button.classList.add('selected');
+      button.disabled = false;
+    } else {
+      button.classList.remove('selected');
+      button.disabled = shouldBeDisabled;
+    }
+  });
+}
+
+function createButtonsForPage(page) {
+  const start = page * genresPerPage;
+  const end = start + genresPerPage;
+  const genresToShow = pagedGenres.slice(start, end);
+
+  const buttons = genresToShow.map(interest => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'interest-btn';
+    button.textContent = interest;
+
+    const isSelected = selectedInterests.includes(interest);
+    const shouldBeDisabled = !isSelected && selectedInterests.length >= 6;
+
+    if (isSelected) {
+      button.classList.add('selected');
+    }
+    
+    button.disabled = shouldBeDisabled;
+
+    button.addEventListener('click', () => {
+      if (button.classList.contains('selected')) {
+        // Deselecting - remove from array
+        button.classList.remove('selected');
+        selectedInterests = selectedInterests.filter(i => i !== interest);
+      } else {
+        // Selecting - only if we have less than 6
+        if (selectedInterests.length < 6) {
+          button.classList.add('selected');
+          selectedInterests.push(interest);
+        }
+      }
+      
+      updateFormFields();
+      updateButtonStates();
+      
+      // Enable continue button ONLY when exactly 6 genres are selected
+      continueBtn.disabled = selectedInterests.length !== 6;
+    });
+
+    return button;
+  });
+
+  // Navigation buttons
+  if (pagedGenres.length > genresPerPage) {
+    if (page > 0) {
+      const backBtn = document.createElement('button');
+      backBtn.type = 'button';
+      backBtn.className = 'interest-btn nav-btn back-btn';
+      backBtn.textContent = '‹ Back';
+
+      backBtn.addEventListener('click', () => {
+        currentPage--;
+        if (currentPage < 0) currentPage = Math.floor((pagedGenres.length - 1) / genresPerPage);
+        const prevButtons = createButtonsForPage(currentPage);
+        animateGenresUpdate(prevButtons);
+      });
+
+      buttons.unshift(backBtn);
+    }
+
+    if ((page + 1) * genresPerPage < pagedGenres.length) {
+      const moreBtn = document.createElement('button');
+      moreBtn.type = 'button';
+      moreBtn.className = 'interest-btn nav-btn more-btn';
+      moreBtn.textContent = 'More genres/categories ›';
+
+      moreBtn.addEventListener('click', () => {
+        currentPage++;
+        if (currentPage * genresPerPage >= pagedGenres.length) {
+          currentPage = 0;
+        }
+        const nextButtons = createButtonsForPage(currentPage);
+        animateGenresUpdate(nextButtons);
+      });
+
+      buttons.push(moreBtn);
+    }
+  }
+
+  return buttons;
+}
+
+function updateFormFields() {
+  const form = document.getElementById('genres-form');
+  form.querySelectorAll('input[name="genres[]"]').forEach(e => e.remove());
+
+  selectedInterests.forEach(genre => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'genres[]';
+    input.value = genre;
+    form.appendChild(input);
+  });
+}
+
+// Initialize
+fetchGenresFromMultiplePages().then(categories => {
+  pagedGenres = categories;
+  const buttons = createButtonsForPage(currentPage);
+  animateGenresUpdate(buttons);
+  continueBtn.disabled = true; // Disabled until exactly 6 genres are selected
+});
+</script>
+
+
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+
+</body>
+</html>
