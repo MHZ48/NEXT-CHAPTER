@@ -3,6 +3,38 @@ let book = null;
 let image = '';
 
 document.addEventListener('DOMContentLoaded', function () {
+  /**
+   * showAlert(message, type):
+   *   - message: text to display
+   *   - type: Bootstrap alert type: "success", "danger", "warning", etc.
+   * Creates a Bootstrap .alert, injects into #alertContainer, then auto‐dismisses after 3s.
+   */
+  function showAlert(message, type = 'success') {
+    // Create a temporary wrapper
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+      <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    `.trim();
+
+    const alertContainer = document.getElementById('alertContainer');
+    if (!alertContainer) {
+      console.warn('showAlert: #alertContainer not found');
+      return;
+    }
+    alertContainer.append(wrapper);
+
+    // After 3 seconds, let Bootstrap’s JS fade it out
+    setTimeout(() => {
+      const el = wrapper.querySelector('.alert');
+      if (el) {
+        // Use Bootstrap’s Alert API to close (fade) the element
+        bootstrap.Alert.getOrCreateInstance(el).close();
+      }
+    }, 3000);
+  }
 
   
    
@@ -327,6 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="col-12 rounded-4 mb-5">
               <div class="comment-card border-0 shadow-sm">
                 <div class="comment-card-body">
+                      <div id="alertContainer" class="mb-3"></div>
                   <form id="reviewForm">
                     <div class="mb-0">
                       <textarea id="reviewText" class="form-control comment-bg-1" rows="4" placeholder="Write your review..." required></textarea>
@@ -396,15 +429,14 @@ document.addEventListener('DOMContentLoaded', function () {
           body: formData
         }).then(response => response.text())
           .then(() => {
-            alert('Review submitted successfully!');
+    showAlert('Review submitted successfully!', 'success');
             form.reset();
             selectedRating = 0;
             updateStars(0);
             fetchComments();
-          }).catch(error => console.error('Error posting review:', error));
+          }).catch(error => showAlert('Failed to submit review. Please try again.', 'danger'));
       } else {
-        alert('Please enter a review.');
-      }
+showAlert('Please enter a review before submitting.', 'warning');      }
     });
   }
 

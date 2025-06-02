@@ -1627,3 +1627,45 @@ margin-top: 50px;
 .progress {
     height: 6px;
 }
+/* Ensure the alert container sits above other elements (if needed) */
+#alertContainer {
+  position: relative;   /* allows any absolutely positioned children if you change that later */
+  z-index: 1050;        /* sit above most content—tweak if something still overlaps */
+  margin-bottom: 1rem;  /* give some breathing room below the alert */
+}
+
+/* Make sure each alert inside #alertContainer has consistent spacing */
+#alertContainer .alert {
+  margin-bottom: 0.75rem;    /* space between multiple alerts */
+  border-radius: 0.375rem;   /* match Bootstrap default (rounded corners) */
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* subtle shadow */
+  font-size: 0.95rem;        /* slightly smaller text if you prefer */
+}
+
+/* Optional: if you want the close button padding to be a bit tighter */
+#alertContainer .alert .btn-close {
+  padding: 0.25rem;
+}
+
+/* If you’d rather have the alert “slide down” from above, you could do: */
+@keyframes slideDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+#alertContainer .alert {
+  animation: slideDownFade 0.3s ease-out;
+}
+
+/* Responsive tweak: ensure alerts don’t overflow on small screens */
+@media (max-width: 576px) {
+  #alertContainer .alert {
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
+}
