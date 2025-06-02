@@ -149,7 +149,7 @@ $imgUrl = isset($_SESSION['profile_img']) && !empty($_SESSION['profile_img'])
 
         // Process each book
         books.forEach((book, i) => {
-          const bookId = book.book_Id || book.book_id; // تأكد من الحقل الصحيح حسب PHP
+          const bookId = book.book_Id || book.book_id; //PHP
           if (!bookId) return;
 
           fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`)
@@ -165,16 +165,14 @@ $imgUrl = isset($_SESSION['profile_img']) && !empty($_SESSION['profile_img'])
               const thumbnail = volumeInfo.imageLinks?.thumbnail
                 ? volumeInfo.imageLinks.thumbnail.replace('http://', 'https://')
                 : 'default-book.png';
-              const rating = book.averageRating || 0;
-              let starRating = '';
+                const rating = volumeInfo.averageRating || 0;
+               let starRating = '';
 for (let i = 1; i <= 5; i++) {
   starRating += `<span
     class="star ${i <= rating ? 'filled' : ''}"
     data-rating="${rating.toFixed(1)}"
   >★</span>`;
-}
-
-              // بناء HTML بعد استلام كل كتاب
+}             
               if (cardIndex % perSlide === 0) {
                 html += `<div class="carousel-item ${cardIndex === 0 ? 'active' : ''}"><div class="row gx-2">`;
               }
@@ -199,7 +197,7 @@ for (let i = 1; i <= 5; i++) {
                 html += `</div></div>`;
               }
 
-              // فقط بعد آخر عنصر يتم رسم المخرجات
+         
               if (cardIndex === books.length) {
                 inner.innerHTML = html;
               }

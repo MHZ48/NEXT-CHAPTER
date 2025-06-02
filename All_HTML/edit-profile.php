@@ -1,3 +1,14 @@
+<?php 
+session_start();
+$username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
+$imgUrl = isset($_SESSION['profile_img']) && !empty($_SESSION['profile_img'])
+    ?  'https://www.w3schools.com/w3images/avatar2.png'
+    : 'https://www.w3schools.com/w3images/avatar2.png';
+    $user_id = $_SESSION['user_id'] ;
+///Graduation-project/All_IMAGES/Profil.png    
+    
+
+?> 
 <!DOCTYPE html>
 <html lang="ar">
 
@@ -152,26 +163,33 @@ input{
                     style="width: 50px; height: 50px;" alt="Profile Picture" id="profileImage">
             </div>
             <div class="ms-3">
-                <h4 class="mb-0">Username</h4>
+                <h4 class="mb-0"><?php echo $username; ?></h4>
             </div>
         </div>
 
         <div class="row" style="min-height: 345px">
-            <!-- عمود القوائم الجانبية -->
-            <div class="col-md-4"  style="border-right:1px solid var(--color-primary-light);max-height: 345px;" >
-                <ul class="nav flex-column ">
-                    <li class="nav-item"><a class="nav-link active" data-target="general">General</a></li>
-                    <li class="nav-item"><a class="nav-link" data-target="edit-profile">Edit Profile</a></li>
-                    <li class="nav-item"><a class="nav-link" data-target="password">Password</a></li>
-                </ul>
-            </div>
 
-            <!-- عمود الأقسام المحتوى -->
+       <div class="col-md-4" style="border-right:1px solid var(--color-primary-light);max-height: 345px;">
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link active" data-target="username-edit">Username Edit</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-target="profile-edit">Profile Page Edit</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-target="email-edit">Email Edit</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-target="password-edit">Password Edit</a>
+    </li>
+  </ul>
+</div>
+
+
             <div class="col-md-8" style="max-height: 345px; padding-left: 45px;">
-                <form id="general" class="content-section">
+                <form id="general" class="content-section" action ="edit_information.php" method="post">
                     <h5>General Settings</h5>
-
-
                     <div class="mb-3">
                         <label class="form-label">Username</label>
                         <input type="text" class="form-control" placeholder="UserName" >
@@ -188,19 +206,17 @@ input{
                     </div>
                 </form>
 
-                <!-- 2. قسم Edit Profile -->
+
 <div id="edit-profile" class="content-section">
   <div class="d-flex flex-column align-items-center">
-  <img
-    src="https://www.w3schools.com/w3images/avatar2.png"
+  <img src="https://www.w3schools.com/w3images/avatar2.png"
     class="rounded-circle mb-3"
     style="width: 200px; height: 200px;"
     alt="Profile Picture"
-    id="profileImageExisting"
-  />
+    id="profileImageExisting" />
 </div>
   
-  <form class="d-flex flex-column align-items-center">
+  <form class="d-flex flex-column align-items-center" id="edit_profile" method="post" action="edit_profile.php">
     <button class="btn btn-dark btn-sm mb-2 continue-btn" id="uploadButton">
       Change Photo
     </button>
@@ -209,8 +225,11 @@ input{
 </div>
 
                 <!-- 3. قسم Password -->
-                <form id="password" class="content-section">
-                   <form>
+                <form id="password" class="content-section" method="post" action="edit_information.php">
+                    <h5>Password Settings</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label">
+                  
                     <div class="mb-3">
                         <label class="form-label">Old Password</label>
                         <input type="password" class="form-control" id="oldPassword" placeholder="OldPassword">

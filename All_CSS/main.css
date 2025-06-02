@@ -1050,7 +1050,7 @@ textarea {
 /* Description box style */
 .description-box {
     background-color: #2D241F;
-    color: var(--color-primary-light); /* keeping text color readable */
+    color: var(--color-card-text); /* keeping text color readable */
     border-radius: 15px;
     padding: 2rem;
     margin-bottom: 2rem;
