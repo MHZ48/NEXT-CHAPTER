@@ -1,14 +1,69 @@
+
 <?php 
 session_start();
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
+ 
+
+?> 
+<?php
+require_once 'C:/xampp/vendor/autoload.php'; 
+require_once '../connection.php'; // or your DB connection
 $imgUrl = isset($_SESSION['profile_img']) && !empty($_SESSION['profile_img'])
     ?  'https://www.w3schools.com/w3images/avatar2.png'
     : 'https://www.w3schools.com/w3images/avatar2.png';
     $user_id = $_SESSION['user_id'] ;
 ///Graduation-project/All_IMAGES/Profil.png    
-    
 
-?> 
+
+use Cloudinary\Cloudinary;
+
+$cloudinary = new Cloudinary([
+    'cloud' => [
+        'cloud_name' => 'dn8gqkmpu',
+        'api_key'    => '935617689972222',
+        'api_secret' => 'dqzXb7ASR5jELiJNUsyOk0fygEY',
+    ],
+    'url' => [
+        'secure' => true
+    ]
+]);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
+    $file = $_FILES['photo']['tmp_name'];
+
+    try {
+        $result = $cloudinary->uploadApi()->upload($file, [
+            'folder' => 'user_uploads/', // optional
+        ]);
+        $imageUrl = $result['secure_url'];
+
+        //echo "Image uploaded successfully";
+
+        // Save to DB
+        $userId = $_SESSION['user_id'];
+        $query = "UPDATE users SET profile_img = '$imageUrl' WHERE id = $userId;
+";
+        $updateResult = mysqli_query($link, $query);
+
+        if (mysqli_affected_rows($link) == 1) {
+            $message = "✅ Image uploaded and saved successfully.";
+            $messageType = 'success';
+            // Optionally: redirect
+            // header("Location: ALL_HTML/home.php");
+            // exit();
+        } else {
+             $message = "⚠️ Could not update user photo in database.";
+            $messageType = 'error';
+
+        }
+    } catch (Exception $e) {
+        $message = "❌ Upload failed: " . htmlspecialchars($e->getMessage());
+        $messageType = 'error';
+
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="ar">
 
@@ -179,23 +234,27 @@ input{
 
             <!-- عمود الأقسام المحتوى -->
             <div class="col-md-8" style="max-height: 345px; padding-left: 45px;">
-                <form id="general" class="content-section" action ="edit_information.php" method="post">
-                    <h5>General Settings</h5>
-                    <div class="mb-2">
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control" placeholder="UserName" >
-                    </div>
+                <form id="general" class="content-section" action="edit_information.php" method="post">
+  <h5>General Settings</h5>
 
-                    <div class="mb-2">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" placeholder="anything@gmail.com">
-                    </div>
+  <input type="hidden" name="form_type" value="general">
 
-                    <div class="mt-4">
-                        <button class="btn btn-primary continue-btn" id="saveGeneral">Save Changes</button>
-                        <button class="btn btn-cancel btn-cance">Cancel</button>
-                    </div>
-                </form>
+  <div class="mb-2">
+    <label class="form-label">Username</label>
+    <input type="text" name="username" class="form-control" placeholder="UserName" required>
+  </div>
+
+  <div class="mb-2">
+    <label class="form-label">Email</label>
+    <input type="email" name="email" class="form-control" placeholder="anything@gmail.com" required>
+  </div>
+
+  <div class="mt-4">
+    <button type="submit" class="btn btn-primary continue-btn">Save Changes</button>
+    <button type="reset" class="btn btn-cancel btn-cance">Cancel</button>
+  </div>
+</form>
+
 
                 <!-- 2. قسم Edit Profile -->
 <div id="edit-profile" class="content-section">
@@ -209,41 +268,49 @@ input{
   />
 </div>
   
-  <form class="d-flex flex-column align-items-center" id="edit_profile" method="post" action="edit_profile.php">
-    <button class="btn btn-dark btn-sm mb-2 continue-btn" id="uploadButton">
-      Change Photo
-    </button>
-    <input type="file" id="fileInput" class="d-none" accept="image/*" />
-</form>
+<form action="edit_profile.php" method="POST" enctype="multipart/form-data">
+      <input type="file" name="photo" accept="image/*" required><br>
+      <button type="submit">Upload</button>
+        <input type="file" id="fileInput" class="d-none" accept="image/*" />
+    </form>
+
+        <?php if (!empty($message)): ?>
+      <div class="message <?php echo htmlspecialchars($messageType); ?>">
+        <?php echo htmlspecialchars($message); ?>
+      </div>
+    <?php endif; ?>
 </div>
 
                 <!-- 3. قسم Password -->
                 <form id="password" class="content-section" method="post" action="edit_information.php">
-                    <h5>Password Settings</h5>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <label class="form-label" style="width:100%;">
-                  
-                    <div class="mb-2">
-                        <label class="form-label">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" placeholder="OldPassword" style="width:100%;">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" placeholder="Password">
-                            <div id="passwordStrengthBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                        
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Password">
-                    </div>
-                
+  <h5>Password Settings</h5>
 
-                    <div class="mt-4">
-                        <button class="btn btn-save" id="savePassword" disabled>Save Changes</button>
-                        <button class="btn btn-cancel btn-cance">Cancel</button>
-                    </div>
-                </form>
+  <input type="hidden" name="form_type" value="password">
+
+  <div class="mb-2">
+    <label class="form-label">Old Password</label>
+    <input type="password" name="old_password" class="form-control" id="oldPassword" placeholder="Old Password" required>
+  </div>
+
+  <div class="mb-2">
+    <label class="form-label">New Password</label>
+    <input type="password" name="new_password" class="form-control" id="newPassword" placeholder="New Password" required>
+    <div class="progress">
+      <div id="passwordStrengthBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <div class="mb-2">
+    <label class="form-label">Confirm Password</label>
+    <input type="password" name="confirm_password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required>
+  </div>
+
+  <div class="mt-4">
+    <button type="submit" class="btn btn-save" id="savePassword" disabled>Save Changes</button>
+    <button type="reset" class="btn btn-cancel btn-cance">Cancel</button>
+  </div>
+</form>
+
                 
             </div>
         </div>
