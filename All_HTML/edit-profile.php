@@ -6,7 +6,7 @@ $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
 
 ?> 
 <?php
-require_once 'C:/xampp/vendor/autoload.php'; 
+require_once __DIR__ . '/../vendor/autoload.php'; // Adjust path as needed
 require_once '../connection.php'; // or your DB connection
 $imgUrl = isset($_SESSION['profile_img']) && !empty($_SESSION['profile_img'])
     ?  'https://www.w3schools.com/w3images/avatar2.png'
@@ -16,7 +16,6 @@ $imgUrl = isset($_SESSION['profile_img']) && !empty($_SESSION['profile_img'])
 
 
 use Cloudinary\Cloudinary;
-
 $cloudinary = new Cloudinary([
     'cloud' => [
         'cloud_name' => 'dn8gqkmpu',
@@ -420,4 +419,4 @@ input{
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-</html>
+</html>composer init
