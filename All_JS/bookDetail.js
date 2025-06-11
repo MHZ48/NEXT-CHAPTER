@@ -597,7 +597,7 @@ document.addEventListener('DOMContentLoaded', function () {
           authors: book?.authors?.join(', ') || ''
         };
 
-        fetch('all_JS/check_book.php', {
+        fetch('All_JS/check_book.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
