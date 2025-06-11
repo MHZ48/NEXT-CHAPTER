@@ -38,7 +38,7 @@ if ($result) {
     $_SESSION['user_id'] = $user_id;
 
     // Optional redirect or confirmation
-    header("Location: ./ALL_HTML/preferences.html");
+    header("Location: All_HTML/preferences.html");
     exit();
    /* echo '<pre>';
     print_r($_SESSION);
@@ -48,7 +48,7 @@ if ($result) {
 }
 
 } else {
-    header("Location: ./ALL_HTML/signbook.html");
+    header("Location: All_HTML/signbook.html");
     exit();
 }
 ?>
