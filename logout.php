@@ -6,7 +6,7 @@ echo '</pre>';*/
 session_unset();
 session_destroy();
 echo "done ";
-header("Location: ALL_HTML/first.html"); // ✅ no redirect loop
+header("Location: All_HTML/first.html"); // ✅ no redirect loop
 exit();
 //echo "done ";
 ?>
