@@ -7,7 +7,7 @@ session_start();
 
 if (!isset($_SESSION['user_id'])) {
     // لو المستخدم غير مسجل دخول، ارجع لصفحة تسجيل الدخول أو عرض خطأ
-   header("Location: login.php");
+   header("Location: ../login.php");
     exit();
 }
 
