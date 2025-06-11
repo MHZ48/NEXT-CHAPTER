@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const videoSources = {
-    home: '/Videos/main.mp4',
-    recommendation: '/Videos/recommendation_intro.mp4', 
-    about: '/Videos/about_intro.mp4'
+    home: '../Videos/main.mp4',
+    recommendation: '../Videos/recommendation_intro.mp4', 
+    about: '../Videos/about_intro.mp4'
   };
 
   // ========== STATE MANAGEMENT ==========
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     isVideoPlaying = true;
     setNavClickable(false);
     
-    const samePageVideoSrc = `/Videos/${currentPage}_to_${currentPage}.mp4`;
+    const samePageVideoSrc = `../Videos/${currentPage}_to_${currentPage}.mp4`;
     
     video.src = samePageVideoSrc;
     video.load();
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
     isVideoPlaying = true;
     setNavClickable(false);
     
-    const transitionVideoSrc = `/Videos/${fromPage}_to_${toPage}.mp4`;
+    const transitionVideoSrc = `../Videos/${fromPage}_to_${toPage}.mp4`;
     
     video.src = transitionVideoSrc;
     video.load();
