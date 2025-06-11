@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch(apiURL)
     .then(response => response.json())
     .then(data => {
-      fetch('./users_rating.php', {
+      fetch('../All_JS/users_rating.php', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function () {
           authors: book?.authors?.join(', ') || ''
         };
 
-        fetch('All_JS/check_book.php', {
+        fetch('../All_JS/check_book.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
