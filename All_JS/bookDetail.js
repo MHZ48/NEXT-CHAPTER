@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch(apiURL)
     .then(response => response.json())
     .then(data => {
-      fetch('users_rating.php', {
+      fetch('./users_rating.php', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
