@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION['profile_img'] = $row['profile_img']; // or whatever variable holds the user ID from the DB
 
            // $_SESSION['login_message'] = "Successfully logged in!";
-            header("Location: ALL_HTML/home.php");
+            header("Location: ./ALL_HTML/home.php");
             exit();
         } else {
             echo "<div class='alert alert-danger'>Invalid email or password!</div>";
