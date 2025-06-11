@@ -1,3 +1,7 @@
+<?php
+// This tells DigitalOcean this is a PHP app
+phpinfo();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
