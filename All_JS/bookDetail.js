@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch(apiURL)
     .then(response => response.json())
     .then(data => {
-      fetch('/Graduation-project/ALL_JS/users_rating.php', {
+      fetch('./All_JS/users_rating.php', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -563,7 +563,7 @@ document.addEventListener('DOMContentLoaded', function () {
           thumbnail: image?.slice(0, 64)
         };
 
-        fetch('/Graduation-project/ALL_JS/toggle_book.php', {
+        fetch('All_JS/toggle_book.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -597,7 +597,7 @@ document.addEventListener('DOMContentLoaded', function () {
           authors: book?.authors?.join(', ') || ''
         };
 
-        fetch('/Graduation-project/ALL_JS/check_book.php', {
+        fetch('all_JS/check_book.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

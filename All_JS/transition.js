@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const videoSources = {
-    home: './Videos/main.mp4',
-    recommendation: './Videos/recommendation_intro.mp4', 
-    about: './Videos/about_intro.mp4'
+    home: '/Videos/main.mp4',
+    recommendation: '/Videos/recommendation_intro.mp4', 
+    about: '/Videos/about_intro.mp4'
   };
 
   // ========== STATE MANAGEMENT ==========
