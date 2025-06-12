@@ -1,5 +1,5 @@
 <?php
-require_once 'C:/xampp/vendor/autoload.php'; 
+require_once '../vendor/autoload.php'; 
 require_once '../connection.php'; // or your DB connection
 
 session_start();
