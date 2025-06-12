@@ -609,14 +609,37 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       // Bind all buttons
-      const buttonConfigs = [
-        { id: 'favorite-button', table: 'myfavorites' },
-        { id: 'library-toggle-button', table: 'mylibrary' },
-        { id: 'openCover-toggle-button', table: 'myopencover' },
-        { id: 'closedCover-toggle-button', table: 'myclosedcover' },
-        { id: 'dustyShelves-toggle-button', table: 'mydustyshelves' }
-      ];
-
+    const buttonConfigs = [
+  { 
+    id: 'favorite-button', 
+    table: 'myfavorites',
+    // Favorite uses fill color change, not SVG swap
+  },
+  { 
+    id: 'library-toggle-button', 
+    table: 'mylibrary',
+    iconDefault: 'library-icon-default',
+    iconActive: 'library-icon-active'
+  },
+  { 
+    id: 'openCover-toggle-button', 
+    table: 'myopencover',
+    iconDefault: 'openCover-icon-default',
+    iconActive: 'openCover-icon-active'
+  },
+  { 
+    id: 'closedCover-toggle-button', 
+    table: 'myclosedcover',
+    iconDefault: 'closedCover-icon-default',
+    iconActive: 'closedCover-icon-active'
+  },
+  { 
+    id: 'dustyShelves-toggle-button', 
+    table: 'mydustyshelves',
+    iconDefault: 'dustyShelves-icon-default',
+    iconActive: 'dustyShelves-icon-active'
+  }
+];
       buttonConfigs.forEach(cfg => {
         const btn = document.getElementById(cfg.id);
         if (btn) {
