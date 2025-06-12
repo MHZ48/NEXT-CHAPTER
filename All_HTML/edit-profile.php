@@ -6,7 +6,7 @@ $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
 
 ?> 
 <?php
-require_once '../vendor/autoload.php'; 
+require_once __DIR__ . '/../vendor/autoload.php'; 
 require_once '../connection.php'; // or your DB connection
 $imgUrl = isset($_SESSION['profile_img']) && !empty($_SESSION['profile_img'])
     ?  'https://www.w3schools.com/w3images/avatar2.png'
