@@ -16,8 +16,6 @@ $link->real_connect(
 );
 
 if ($link->connect_error) {
-    die("Connection failed: " . $link->connect_error);
-} else {
-    echo "Connected to DigitalOcean MySQL";
+     die("❌ Connection failed: " . $link->connect_error);
 }
 ?>
