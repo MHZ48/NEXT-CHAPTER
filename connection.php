@@ -1,21 +1,17 @@
 <?php
-// Parse the Railway DB URL
-$url = "mysql://root:NWgFxpnPgUhdfkdmejYtARqUBNXbLrxJ@crossover.proxy.rlwy.net:35233/railway";
-$parts = parse_url($url);
+$link = mysqli_init();
+mysqli_ssl_set($link, NULL, NULL, __DIR__ . "/ca-certificate.crt", NULL, NULL);
 
-$host = $parts['host'];              // containers-us-west-34.railway.app
-$port = $parts['port'];              // 5872
-$user = $parts['user'];              // your DB username
-$pass = $parts['pass'];              // your DB password
-$dbname = ltrim($parts['path'], '/'); // your DB name
+// USE ENV VAR INSTEAD
+$host = "db-mysql-fra1-...ondigitalocean.com";
+$port = 25060;
+$user = "doadmin";
+$pass = getenv("DB_PASSWORD"); // ← this replaces the hardcoded password
+$dbname = "defaultdb";
 
-// Connect to the MySQL DB
-$link = new mysqli($host, $user, $pass, $dbname, $port);
+$link->real_connect($host, $user, $pass, $dbname, $port, NULL, MYSQLI_CLIENT_SSL);
 
-// Check the connection
 if ($link->connect_error) {
-    die("❌ Connection failed: " . $link->connect_error);
+    die("Connection failed: " . $link->connect_error);
 }
- 
-//echo "✅ Connected to Railway MySQL!";
 ?>
