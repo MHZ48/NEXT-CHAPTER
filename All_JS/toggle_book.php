@@ -1,21 +1,33 @@
 <?php
-//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
 session_start();
-require_once '../connection.php';
 header("Content-Type: application/json");
+require_once '../connection.php';
 
+// ✅ Check login
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(["error" => "Not logged in"]);
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
+// ✅ Parse input
 $input = json_decode(file_get_contents("php://input"), true);
-//file_put_contents('debug_toggle.txt', print_r($input, true), FILE_APPEND);
+
+if (!isset($input['table'], $input['bookId'], $input['title'], $input['author'], $input['thumbnail'])) {
+    http_response_code(400);
+    echo json_encode(["error" => "Missing data fields"]);
+    exit;
+}
 
 $table = $input['table'];
-$user_id = $_SESSION['user_id'];
 $book_Id = $input['bookId'];
-$title = $input['title'] ?? '';
-$author = $input['authors'] ?? ''; // Use 'authors' from frontend, but insert into 'author'
-$thumbnail = $input['thumbnail'] ?? '';
+$title = $input['title'];
+$author = $input['author'];
+$thumbnail = $input['thumbnail'];
 
-// Secure table whitelist
+// ✅ Whitelist target tables
 $allowedTables = ['myfavorites', 'mylibrary', 'myopencover', 'myclosedcover', 'mydustyshelves'];
 if (!in_array($table, $allowedTables)) {
     http_response_code(400);
@@ -23,34 +35,28 @@ if (!in_array($table, $allowedTables)) {
     exit;
 }
 
-if (!$user_id || !$title || !$author || !$thumbnail) {
-    http_response_code(401);
-    echo json_encode(["error" => "Missing data"]);
-    exit;
-}
-
-// Toggle logic
+// ✅ Check if book already exists
 $stmt = $link->prepare("SELECT id FROM `$table` WHERE user_id = ? AND book_Id = ?");
 $stmt->bind_param("is", $user_id, $book_Id);
 $stmt->execute();
 $res = $stmt->get_result();
 
-if ($res && $res->num_rows > 0) {
-    $del = $link->prepare("DELETE FROM `$table` WHERE user_id = ?  AND book_Id = ?");
-    $del->bind_param("is", $user_id, $book_Id);
-    $del->execute();
-    http_response_code(200);
+if ($res->num_rows > 0) {
+    // Book exists → delete
+    $deleteStmt = $link->prepare("DELETE FROM `$table` WHERE user_id = ? AND book_Id = ?");
+    $deleteStmt->bind_param("is", $user_id, $book_Id);
+    $deleteStmt->execute();
+    $deleteStmt->close();
     echo json_encode(["status" => "removed"]);
-    $del->close();
 } else {
-    $ins = $link->prepare("INSERT INTO `$table` (user_id, title, author, thumbnail, book_Id) VALUES (?, ?, ?, ?, ?)");
-    $ins->bind_param("issss", $user_id, $title, $author, $thumbnail, $book_Id);
-    $ins->execute();
-    http_response_code(300);
+    // Book doesn't exist → insert
+    $insertStmt = $link->prepare("INSERT INTO `$table` (user_id, book_Id, title, author, thumbnail) VALUES (?, ?, ?, ?, ?)");
+    $insertStmt->bind_param("issss", $user_id, $book_Id, $title, $author, $thumbnail);
+    $insertStmt->execute();
+    $insertStmt->close();
     echo json_encode(["status" => "added"]);
-    $ins->close();
 }
+
 $stmt->close();
 $link->close();
-
 ?>

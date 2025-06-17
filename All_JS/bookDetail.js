@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (ratingEl && data.book_rating != null) {
     ratingEl.textContent = `${Number(data.book_rating).toFixed(1)}/5.0`;
   } else {
-    ratingEl.textContent = 'No rating';
+    ratingEl.textContent = '0';
   }
 })
 .catch(err => {
