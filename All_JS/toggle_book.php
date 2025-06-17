@@ -52,24 +52,5 @@ if ($res && $res->num_rows > 0) {
 }
 $stmt->close();
 $link->close();
-/*session_start();
-require_once '../connection.php';
-header("Content-Type: application/json");
-$input = json_decode(file_get_contents("php://input"), true);
-
-$table = $input['table'];
-$user_id = $_SESSION['user_id'];
-$book_Id = $input['bookId'];
-$title = $input['title'] ?? '';
-$author = $input['authors'] ?? ''; // Use 'authors' from frontend, but insert into 'author'
-$thumbnail = $input['thumbnail'] ?? '';
-
-//echo "Table: $table, User ID: $user_id, Book ID: $book_Id, Title: $title, Author: $author, Thumbnail: $thumbnail\n";
-
-//$sql = "INSERT INTO `$table` (user_id, title, author, thumbnail, book_Id) VALUES ('$user_id', '$title', '$author', '$thumbnail', '$book_Id') ";
-$query = "INSERT INTO `$table` (user_id, title, author, thumbnail, book_Id) VALUES ($user_id, '$title', '$author', '$thumbnail', '$book_Id') ";
-$result = mysqli_query($link, $query);
-http_response_code(202);
-echo json_encode(["status" => "added"]);*/
 
 ?>
