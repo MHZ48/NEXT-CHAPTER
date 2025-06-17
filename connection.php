@@ -1,22 +1,23 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Connect without manual SSL setup
 $link = mysqli_init();
-
-// Set path to your CA cert file
-mysqli_ssl_set($link, NULL, NULL, "/full/path/to/ca-certificate.crt", NULL, NULL);
-
-// Connect to the database
 $link->real_connect(
-    "db-mysql-fra1-53075-do-user-23156859-0.k.db.ondigitalocean.com", // host
-    "doadmin",                     // user
-    "AVNS_3PMBf2wLHehUJTdTyRa",    // password
-    "defaultdb",                   // database
-    25060,                         // port
-    NULL,                          // socket
-    MYSQLI_CLIENT_SSL              // flags
+    "db-mysql-fra1-53075-do-user-23156859-0.k.db.ondigitalocean.com",
+    "doadmin",
+    "AVNS_3PMBf2wLHehUJTdTyRa",
+    "defaultdb",
+    25060,
+    NULL,
+    MYSQLI_CLIENT_SSL  // still uses SSL mode REQUIRED from DO
 );
 
-// Verify connection
 if ($link->connect_error) {
     die("❌ Connection failed: " . $link->connect_error);
+} else {
+    echo "✅ Connected to DigitalOcean MySQL";
 }
 ?>
