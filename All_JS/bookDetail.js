@@ -4,18 +4,26 @@ let image = '';
 
 document.addEventListener('DOMContentLoaded', function () {
       // ===== STEP 5: ADD THIS CODE FIRST ===== //
-    fetch('../PHP/check_auth.php')
+  fetch('../PHP/check_auth.php')
         .then(response => response.json())
         .then(data => {
             if (!data.loggedIn) {
-                // Hide all toggle buttons if not logged in
                 document.querySelectorAll('.toggle-button').forEach(btn => {
                     btn.style.display = 'none';
                 });
                 showAlert('Please login to save books', 'warning');
-            } 
-        })
-        .catch(error => console.error('Auth check failed:', error));
+            }
+            // Continue loading book data
+            loadBookData();
+        });
+
+    function loadBookData() {
+        // Your original book loading code here
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('bookId');
+        // ... rest of your existing code
+    }
+
 /************** */
   function showAlert(message, type = 'success') {
     // Create a temporary wrapper
