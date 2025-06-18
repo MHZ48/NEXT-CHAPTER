@@ -6,12 +6,9 @@ header('Content-Type: application/json');
 $input = json_decode(file_get_contents("php://input"), true);
 $bookId = $input['bookId'] ?? null;
 $table = $input['table'] ?? null;
-$title = $input['title'] ?? '';
-$author = $input['author'] ?? '';
-$thumbnail = $input['thumbnail'] ?? '';
 
 // ✅ Validate input
-$allowedTables = ['mylibrary', 'myfavorites', 'myopencover', 'myclosedcover', 'mydustyshelves'];
+$allowedTables = ['library', 'favorites', 'opencover', 'closedcover', 'dustyshelves'];
 if (!$bookId || !$table || !in_array($table, $allowedTables)) {
     echo json_encode(['error' => 'Invalid input']);
     exit;

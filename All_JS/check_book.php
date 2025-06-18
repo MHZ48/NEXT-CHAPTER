@@ -8,7 +8,7 @@ $bookId = $input['bookId'] ?? null;
 $table = $input['table'] ?? null;
 
 // ✅ Secure table whitelist to prevent SQL injection
-$allowedTables = ['mylibrary', 'myfavorites', 'myopencover', 'myclosedcover', 'mydustyshelves'];
+$allowedTables = ['library', 'favorites', 'opencover', 'closedcover', 'dustyshelves'];
 
 if (!$bookId || !$table || !in_array($table, $allowedTables)) {
     echo json_encode(['error' => 'Invalid input']);
