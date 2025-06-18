@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (ratingEl && data.book_rating != null) {
     ratingEl.textContent = `${Number(data.book_rating).toFixed(1)}/5.0`;
   } else {
-    ratingEl.textContent = 'No rating';
+    ratingEl.textContent = '0.0/5.0';
   }
 })
 .catch(err => {
@@ -553,11 +553,11 @@ document.addEventListener('DOMContentLoaded', function () {
           table: tableName,
           bookId: bookId, // هنا الإضافة المهمة
           title: book?.title || '',
-          authors: book?.authors?.join(', ') || '',
+          author: book?.authors?.join(', ') || '',
           thumbnail: image?.slice(0, 64)
         };
 
-        fetch('../All_JS/toggle_book.php', {
+        fetch('toggle_book.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -586,9 +586,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const payload = {
           table: tableName,
-          bookId: bookId ,// هنا الإضافة المهمة
+          bookId: bookId ,
           title: book?.title || '',
-          authors: book?.authors?.join(', ') || ''
+          author: book?.authors?.join(', ') || ''
         };
 
         fetch('../All_JS/check_book.php', {
@@ -609,14 +609,37 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       // Bind all buttons
-      const buttonConfigs = [
-        { id: 'favorite-button', table: 'myfavorites' },
-        { id: 'library-toggle-button', table: 'mylibrary' },
-        { id: 'openCover-toggle-button', table: 'myopencover' },
-        { id: 'closedCover-toggle-button', table: 'myclosedcover' },
-        { id: 'dustyShelves-toggle-button', table: 'mydustyshelves' }
-      ];
-
+    const buttonConfigs = [
+  { 
+    id: 'favorite-button', 
+    table: 'myfavorites',
+    // Favorite uses fill color change, not SVG swap
+  },
+  { 
+    id: 'library-toggle-button', 
+    table: 'mylibrary',
+    iconDefault: 'library-icon-default',
+    iconActive: 'library-icon-active'
+  },
+  { 
+    id: 'openCover-toggle-button', 
+    table: 'myopencover',
+    iconDefault: 'openCover-icon-default',
+    iconActive: 'openCover-icon-active'
+  },
+  { 
+    id: 'closedCover-toggle-button', 
+    table: 'myclosedcover',
+    iconDefault: 'closedCover-icon-default',
+    iconActive: 'closedCover-icon-active'
+  },
+  { 
+    id: 'dustyShelves-toggle-button', 
+    table: 'mydustyshelves',
+    iconDefault: 'dustyShelves-icon-default',
+    iconActive: 'dustyShelves-icon-active'
+  }
+];
       buttonConfigs.forEach(cfg => {
         const btn = document.getElementById(cfg.id);
         if (btn) {
