@@ -30,31 +30,31 @@ $userTable = "CREATE TABLE IF NOT EXISTS users (
     `status` varchar(7) NOT NULL,
     PRIMARY KEY (`id`)
     )";
-    $myfavoritesTable = "CREATE TABLE IF NOT EXISTS `myfavorites` (
+    $favoritesTable = "CREATE TABLE IF NOT EXISTS `favorites` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `user_id` int(11) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (user_id) REFERENCES users(id)
     )";
-    $mylibraryTable = "CREATE TABLE IF NOT EXISTS `mylibrary` (
+    $libraryTable = "CREATE TABLE IF NOT EXISTS `library` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `user_id` int(11) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (user_id) REFERENCES users(id)
     )";
-   $myopencoverTable = "CREATE TABLE IF NOT EXISTS myopencover (
+   $opencoverTable = "CREATE TABLE IF NOT EXISTS opencover (
     id INT(11) NOT NULL AUTO_INCREMENT,
     user_id INT(11) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 )";
-    $myclosedcoverTable = "CREATE TABLE IF NOT EXISTS myclosedcover (
+    $closedcoverTable = "CREATE TABLE IF NOT EXISTS closedcover (
     id INT(11) NOT NULL AUTO_INCREMENT,
     user_id INT(11) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 )";
-    $mymydustyshelves = "CREATE TABLE IF NOT EXISTS mydustyshelves (
+    $dustyshelves = "CREATE TABLE IF NOT EXISTS dustyshelves (
     id INT(11) NOT NULL AUTO_INCREMENT,
     user_id INT(11) NOT NULL,
     PRIMARY KEY (id),
