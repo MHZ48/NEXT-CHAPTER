@@ -51,14 +51,11 @@ require_once '../connection.php';
     } else {
         // Add the book
         $insert = $link->prepare("INSERT INTO `$table` 
-            (user_id, bookId, title, author, thumbnail) 
+            (user_id, bookId) 
             VALUES (?, ?, ?, ?, ?)");
         $insert->bind_param('issss', 
             $user_id,
             $bookId,
-            $input['title'] ?? '',
-            $input['author'] ?? '',
-            $input['thumbnail'] ?? ''
         );
         $insert->execute();
         echo json_encode(['status' => 'added']);
