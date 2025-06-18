@@ -3,6 +3,22 @@ let book = null;
 let image = '';
 
 document.addEventListener('DOMContentLoaded', function () {
+      // ===== STEP 5: ADD THIS CODE FIRST ===== //
+    fetch('../PHP/check_auth.php')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.loggedIn) {
+                // Hide all toggle buttons if not logged in
+                document.querySelectorAll('.toggle-button').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+                showAlert('Please login to save books', 'warning');
+            } else {
+                loadBookDetails(); // Proceed to load book data if logged in
+            }
+        })
+        .catch(error => console.error('Auth check failed:', error));
+/************** */
   function showAlert(message, type = 'success') {
     // Create a temporary wrapper
     const wrapper = document.createElement('div');
@@ -556,6 +572,18 @@ document.addEventListener('DOMContentLoaded', function () {
           author: book?.authors?.join(', ') || '',
           thumbnail: image?.slice(0, 64)
         };
+/*--------------------------------------------------------- */
+function handleApiErrors(response) {
+    if (!response.ok) {
+        return response.json().then(err => {
+            if (err.error === 'Not logged in') {
+                window.location.href = 'login.html';
+            }
+            throw new Error(err.error);
+        });
+    }
+    return response.json();
+}
 
   fetch('../All_JS/toggle_book.php', {
    method: 'POST',
