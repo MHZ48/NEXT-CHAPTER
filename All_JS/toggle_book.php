@@ -1,70 +1,71 @@
 <?php
 session_start();
-require_once 'connection.php';
-
-if (!isset($_SESSION['user_id'])) {
-    die(json_encode(['error' => 'Not logged in']));
-}
-
-$input = json_decode(file_get_contents("php://input"), true);
-$user_id = $_SESSION['user_id'];
-
-
 header('Content-Type: application/json');
 
 try {
+    // Use absolute path to connection.php
+require_once '../connection.php';
+    
+    if (!isset($_SESSION['user_id'])) {
+        throw new Exception('Not logged in');
+    }
+
     $input = json_decode(file_get_contents("php://input"), true);
-    $bookId = $input['bookId'] ?? null;
-    $table = $input['table'] ?? null;
-    
-    // Validate input
-    $allowedTables = ['library', 'favorites', 'opencover', 'closedcover', 'dustyshelves'];
-    if (!$bookId || !$table || !in_array($table, $allowedTables)) {
-        throw new Exception('Invalid input');
+    if (!$input) {
+        throw new Exception('Invalid JSON input');
     }
 
-    // Check if the book exists
-    $checkSql = "SELECT 1 FROM `$table` WHERE bookId = ? AND user_id = ?";
-    $checkStmt = $link->prepare($checkSql);
-    if (!$checkStmt) {
-        throw new Exception('Check query preparation failed');
-    }
-    
-    // You need to get the current user_id from session or token
-    $user_id = 1; // Replace with actual user ID from session
-    
-    $checkStmt->bind_param('si', $bookId, $user_id);
-    $checkStmt->execute();
-    $checkStmt->store_result();
-
-    if ($checkStmt->num_rows > 0) {
-        // Remove the book
-        $deleteStmt = $link->prepare("DELETE FROM `$table` WHERE bookId = ? AND user_id = ?");
-        if ($deleteStmt) {
-            $deleteStmt->bind_param('si', $bookId, $user_id);
-            $deleteStmt->execute();
-            $deleteStmt->close();
-            echo json_encode(['status' => 'removed']);
-        } else {
-            throw new Exception('Delete query failed');
+    $required = ['bookId', 'table'];
+    foreach ($required as $field) {
+        if (empty($input[$field])) {
+            throw new Exception("Missing required field: $field");
         }
+    }
+
+    $allowedTables = ['favorites', 'library', 'opencover', 'closedcover', 'dustyshelves'];
+    if (!in_array($input['table'], $allowedTables)) {
+        throw new Exception('Invalid table specified');
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $bookId = $input['bookId'];
+    $table = $input['table'];
+
+    // Check if book exists for user
+    $checkSql = "SELECT id FROM `$table` WHERE bookId = ? AND user_id = ?";
+    $stmt = $link->prepare($checkSql);
+    if (!$stmt) {
+        throw new Exception('Database query preparation failed');
+    }
+    $stmt->bind_param('si', $bookId, $user_id);
+    $stmt->execute();
+    $exists = $stmt->get_result()->num_rows > 0;
+    $stmt->close();
+
+    if ($exists) {
+        // Remove the book
+        $delete = $link->prepare("DELETE FROM `$table` WHERE bookId = ? AND user_id = ?");
+        $delete->bind_param('si', $bookId, $user_id);
+        $delete->execute();
+        echo json_encode(['status' => 'removed']);
     } else {
         // Add the book
-        $insertStmt = $link->prepare("INSERT INTO `$table` (user_id, bookId) VALUES (?, ?)");
-        if ($insertStmt) {
-            $insertStmt->bind_param('issss', $user_id, $bookId);
-            $insertStmt->execute();
-            $insertStmt->close();
-            echo json_encode(['status' => 'added']);
-        } else {
-            throw new Exception('Insert query failed');
-        }
+        $insert = $link->prepare("INSERT INTO `$table` 
+            (user_id, bookId, title, author, thumbnail) 
+            VALUES (?, ?, ?, ?, ?)");
+        $insert->bind_param('issss', 
+            $user_id,
+            $bookId,
+            $input['title'] ?? '',
+            $input['author'] ?? '',
+            $input['thumbnail'] ?? ''
+        );
+        $insert->execute();
+        echo json_encode(['status' => 'added']);
     }
 
-    $checkStmt->close();
 } catch (Exception $e) {
+    error_log("Toggle Book Error: " . $e->getMessage());
     echo json_encode(['error' => $e->getMessage()]);
-} finally {
-    $link->close();
 }
 ?>
