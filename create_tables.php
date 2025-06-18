@@ -75,10 +75,10 @@ $userTable = "CREATE TABLE IF NOT EXISTS users (
 if (
     $link->query($userTable) === TRUE &&
     $link->query($genresTable) === TRUE &&
-    $link->query($myfavoritesTable) === TRUE &&
-    $link->query($myopencoverTable) === TRUE &&
-    $link->query($myclosedcoverTable) === TRUE &&
-    $link->query($mymydustyshelves) === TRUE &&
+    $link->query($favoritesTable) === TRUE &&
+    $link->query($opencoverTable) === TRUE &&
+    $link->query($closedcoverTable) === TRUE &&
+    $link->query($dustyshelves) === TRUE &&
     $link->query($myratings) === TRUE &&
     $link->query($mylibraryTable) === TRUE &&
     $link->query($forgotpasswordTable) === TRUE
