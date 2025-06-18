@@ -1,62 +1,66 @@
 <?php
-session_start();
-include_once '../PHP/connection.php';
+header('Content-Type: application/json');
 
-$allowedTables = ['mylibrary', 'myopencover', 'myclosedcover', 'mydustyshelves', 'myfavorites'];
+// DB connection — customize with your credentials
+$host = 'localhost';
+$db   = 'your_database';
+$user = 'your_username';
+$pass = 'your_password';
+$charset = 'utf8mb4';
 
-$data = json_decode(file_get_contents("php://input"), true);
-$response = [];
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+];
 
-if (isset($data['table'], $data['bookId'], $data['title'], $data['author'])) {
-    $table = $data['table'];
-    $bookId = $data['bookId'];
-    $title = $data['title'];
-    $author = $data['author'];
-    $thumbnail = isset($data['thumbnail']) ? $data['thumbnail'] : '';
-
-    if (!in_array($table, $allowedTables)) {
-        http_response_code(403);
-        echo json_encode(['error' => 'Invalid table name']);
-        exit;
-    }
-
-    // Optional: block unauthenticated users
-    if (!isset($_SESSION['user_id'])) {
-        http_response_code(401);
-        echo json_encode(['error' => 'Unauthorized']);
-        exit;
-    }
-
-    $checkQuery = "SELECT * FROM `$table` WHERE bookId = ?";
-    $checkStmt = $conn->prepare($checkQuery);
-    $checkStmt->bind_param("s", $bookId);
-    $checkStmt->execute();
-    $checkResult = $checkStmt->get_result();
-
-    if ($checkResult && $checkResult->num_rows > 0) {
-        // Exists → delete it
-        $deleteQuery = "DELETE FROM `$table` WHERE bookId = ?";
-        $deleteStmt = $conn->prepare($deleteQuery);
-        $deleteStmt->bind_param("s", $bookId);
-        $deleteStmt->execute();
-        $deleteStmt->close();
-        $response['status'] = 'removed';
-    } else {
-        // Doesn’t exist → insert
-        $insertQuery = "INSERT INTO `$table` (bookId, title, author, thumbnail) VALUES (?, ?, ?, ?)";
-        $insertStmt = $conn->prepare($insertQuery);
-        $insertStmt->bind_param("ssss", $bookId, $title, $author, $thumbnail);
-        $insertStmt->execute();
-        $insertStmt->close();
-        $response['status'] = 'added';
-    }
-
-    $checkStmt->close();
-} else {
-    $response['error'] = 'Missing data';
-    http_response_code(400);
+try {
+    $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection failed.']);
+    exit;
 }
 
-header('Content-Type: application/json');
-echo json_encode($response);
+// Input
+$data = json_decode(file_get_contents('php://input'), true);
+$bookId = $data['bookId'] ?? null;
+$table = $data['table'] ?? null;
+$title = $data['title'] ?? '';
+$author = $data['author'] ?? '';
+$thumbnail = $data['thumbnail'] ?? '';
+
+if (!$bookId || !$table) {
+    echo json_encode(['error' => 'Missing required fields.']);
+    exit;
+}
+
+// Sanitize table
+$allowedTables = ['mylibrary', 'myfavorites', 'myopencover', 'myclosedcover', 'mydustyshelves'];
+if (!in_array($table, $allowedTables)) {
+    echo json_encode(['error' => 'Invalid table.']);
+    exit;
+}
+
+// Check if it already exists
+$stmt = $pdo->prepare("SELECT 1 FROM `$table` WHERE bookId = :bookId LIMIT 1");
+$stmt->execute(['bookId' => $bookId]);
+
+if ($stmt->fetch()) {
+    // Exists — remove
+    $stmt = $pdo->prepare("DELETE FROM `$table` WHERE bookId = :bookId");
+    $stmt->execute(['bookId' => $bookId]);
+    echo json_encode(['status' => 'removed']);
+} else {
+    // Does not exist — insert
+    $stmt = $pdo->prepare("INSERT INTO `$table` (bookId, title, author, thumbnail) VALUES (:bookId, :title, :author, :thumbnail)");
+    $stmt->execute([
+        'bookId' => $bookId,
+        'title' => $title,
+        'author' => $author,
+        'thumbnail' => $thumbnail
+    ]);
+    echo json_encode(['status' => 'added']);
+}
+exit;
 ?>
