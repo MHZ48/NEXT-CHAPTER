@@ -1,66 +1,57 @@
 <?php
+require_once '../connection.php'; // ✅ reuse existing connection
+
 header('Content-Type: application/json');
 
-// DB connection — customize with your credentials
-$host = 'localhost';
-$db   = 'your_database';
-$user = 'your_username';
-$pass = 'your_password';
-$charset = 'utf8mb4';
+$input = json_decode(file_get_contents("php://input"), true);
+$bookId = $input['bookId'] ?? null;
+$table = $input['table'] ?? null;
+$title = $input['title'] ?? '';
+$author = $input['author'] ?? '';
+$thumbnail = $input['thumbnail'] ?? '';
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
-
-try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed.']);
-    exit;
-}
-
-// Input
-$data = json_decode(file_get_contents('php://input'), true);
-$bookId = $data['bookId'] ?? null;
-$table = $data['table'] ?? null;
-$title = $data['title'] ?? '';
-$author = $data['author'] ?? '';
-$thumbnail = $data['thumbnail'] ?? '';
-
-if (!$bookId || !$table) {
-    echo json_encode(['error' => 'Missing required fields.']);
-    exit;
-}
-
-// Sanitize table
+// ✅ Validate input
 $allowedTables = ['mylibrary', 'myfavorites', 'myopencover', 'myclosedcover', 'mydustyshelves'];
-if (!in_array($table, $allowedTables)) {
-    echo json_encode(['error' => 'Invalid table.']);
+if (!$bookId || !$table || !in_array($table, $allowedTables)) {
+    echo json_encode(['error' => 'Invalid input']);
     exit;
 }
 
-// Check if it already exists
-$stmt = $pdo->prepare("SELECT 1 FROM `$table` WHERE bookId = :bookId LIMIT 1");
-$stmt->execute(['bookId' => $bookId]);
-
-if ($stmt->fetch()) {
-    // Exists — remove
-    $stmt = $pdo->prepare("DELETE FROM `$table` WHERE bookId = :bookId");
-    $stmt->execute(['bookId' => $bookId]);
-    echo json_encode(['status' => 'removed']);
-} else {
-    // Does not exist — insert
-    $stmt = $pdo->prepare("INSERT INTO `$table` (bookId, title, author, thumbnail) VALUES (:bookId, :title, :author, :thumbnail)");
-    $stmt->execute([
-        'bookId' => $bookId,
-        'title' => $title,
-        'author' => $author,
-        'thumbnail' => $thumbnail
-    ]);
-    echo json_encode(['status' => 'added']);
+// ✅ Check if the book exists
+$checkSql = "SELECT 1 FROM `$table` WHERE bookId = ?";
+$checkStmt = $link->prepare($checkSql);
+if (!$checkStmt) {
+    echo json_encode(['error' => 'Check query preparation failed']);
+    exit;
 }
-exit;
+$checkStmt->bind_param('s', $bookId);
+$checkStmt->execute();
+$checkStmt->store_result();
+
+if ($checkStmt->num_rows > 0) {
+    // ✅ Remove the book
+    $deleteStmt = $link->prepare("DELETE FROM `$table` WHERE bookId = ?");
+    if ($deleteStmt) {
+        $deleteStmt->bind_param('s', $bookId);
+        $deleteStmt->execute();
+        $deleteStmt->close();
+        echo json_encode(['status' => 'removed']);
+    } else {
+        echo json_encode(['error' => 'Delete query failed']);
+    }
+} else {
+    // ✅ Add the book
+    $insertStmt = $link->prepare("INSERT INTO `$table` (bookId, title, author, thumbnail) VALUES (?, ?, ?, ?)");
+    if ($insertStmt) {
+        $insertStmt->bind_param('ssss', $bookId, $title, $author, $thumbnail);
+        $insertStmt->execute();
+        $insertStmt->close();
+        echo json_encode(['status' => 'added']);
+    } else {
+        echo json_encode(['error' => 'Insert query failed']);
+    }
+}
+
+$checkStmt->close();
+$link->close();
 ?>

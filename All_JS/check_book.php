@@ -1,49 +1,35 @@
 <?php
+require_once '../connection.php'; // ✅ use your existing DB connection
+
 header('Content-Type: application/json');
 
-// DB connection — customize with your credentials
-$host = 'localhost';
-$db   = 'your_database';
-$user = 'your_username';
-$pass = 'your_password';
-$charset = 'utf8mb4';
+$input = json_decode(file_get_contents("php://input"), true);
+$bookId = $input['bookId'] ?? null;
+$table = $input['table'] ?? null;
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
-
-try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed.']);
-    exit;
-}
-
-// Get input
-$data = json_decode(file_get_contents('php://input'), true);
-$bookId = $data['bookId'] ?? null;
-$table = $data['table'] ?? null;
-
-if (!$bookId || !$table) {
-    echo json_encode(['error' => 'Invalid input.']);
-    exit;
-}
-
-// Safe table name check (whitelist recommended)
+// ✅ Secure table whitelist to prevent SQL injection
 $allowedTables = ['mylibrary', 'myfavorites', 'myopencover', 'myclosedcover', 'mydustyshelves'];
-if (!in_array($table, $allowedTables)) {
-    echo json_encode(['error' => 'Invalid table.']);
+
+if (!$bookId || !$table || !in_array($table, $allowedTables)) {
+    echo json_encode(['error' => 'Invalid input']);
     exit;
 }
 
-// Query
-$stmt = $pdo->prepare("SELECT 1 FROM `$table` WHERE bookId = :bookId LIMIT 1");
-$stmt->execute(['bookId' => $bookId]);
-$exists = $stmt->fetch() !== false;
+// ✅ Prepare and run the query safely
+$query = "SELECT 1 FROM `$table` WHERE bookId = ?";
+$stmt = $link->prepare($query);
 
-echo json_encode(['exists' => $exists]);
-exit;
+if ($stmt) {
+    $stmt->bind_param('s', $bookId);
+    $stmt->execute();
+    $stmt->store_result();
+
+    echo json_encode(['exists' => $stmt->num_rows > 0]);
+
+    $stmt->close();
+} else {
+    echo json_encode(['error' => 'Query preparation failed']);
+}
+
+$link->close();
 ?>
