@@ -557,27 +557,35 @@ document.addEventListener('DOMContentLoaded', function () {
           thumbnail: image?.slice(0, 64)
         };
 
-        fetch('toggle_book.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.status === 'added') {
-              btn.classList.add('active');
-              if (iconDefaultId && iconActiveId) {
-                document.getElementById(iconDefaultId)?.classList.add('hidden');
-                document.getElementById(iconActiveId)?.classList.remove('hidden');
-              }
-            } else if (data.status === 'removed') {
-              btn.classList.remove('active');
-              if (iconDefaultId && iconActiveId) {
-                document.getElementById(iconDefaultId)?.classList.remove('hidden');
-                document.getElementById(iconActiveId)?.classList.add('hidden');
-              }
-            }
-          });
+  fetch('../All_JS/toggle_book.php', {
+   method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',  // THIS LINE IS CRITICAL
+  body: JSON.stringify(payload)
+  })
+.then(res => res.text()) // grab raw text first
+.then(text => {
+  try {
+    const data = JSON.parse(text); // try parsing it
+    if (data.status === 'added') {
+      btn.classList.add('active');
+      if (iconDefaultId && iconActiveId) {
+        document.getElementById(iconDefaultId)?.classList.add('hidden');
+        document.getElementById(iconActiveId)?.classList.remove('hidden');
+      }
+    } else if (data.status === 'removed') {
+      btn.classList.remove('active');
+      if (iconDefaultId && iconActiveId) {
+        document.getElementById(iconDefaultId)?.classList.remove('hidden');
+        document.getElementById(iconActiveId)?.classList.add('hidden');
+      }
+    } else if (data.error) {
+      console.error("Server error:", data.error);
+    }
+  } catch (err) {
+    console.error("Invalid JSON or server error response:", text);
+  }
+});
       }
       //دالة فحص حالة الزر عند تحميل الصفحة
       function checkToggleButtonState(buttonId, tableName, iconDefaultId = null, iconActiveId = null) {
