@@ -13,9 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     btn.style.display = 'none';
                 });
                 showAlert('Please login to save books', 'warning');
-            } else {
-                loadBookDetails(); // Proceed to load book data if logged in
-            }
+            } 
         })
         .catch(error => console.error('Auth check failed:', error));
 /************** */
