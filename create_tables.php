@@ -80,7 +80,7 @@ if (
     $link->query($closedcoverTable) === TRUE &&
     $link->query($dustyshelves) === TRUE &&
     $link->query($myratings) === TRUE &&
-    $link->query($mylibraryTable) === TRUE &&
+    $link->query($libraryTable) === TRUE &&
     $link->query($forgotpasswordTable) === TRUE
 )
  {
