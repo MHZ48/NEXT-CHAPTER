@@ -1,68 +1,88 @@
 <?php
+/**
+ * toggle_book.php
+ *
+ * Adds or removes a book from one of the user's lists:
+ * favorites, library, opencover, closedcover, dustyshelves.
+ * Expects JSON or form data with 'bookId' and 'table'.
+ * Returns JSON { status: 'added'|'removed', table: string, bookId: string }.
+ */
+
 session_start();
+require_once 'connection.php';
+
 header('Content-Type: application/json');
 
-try {
-    // Use absolute path to connection.php
-require_once '../connection.php';
-    
-    if (!isset($_SESSION['user_id'])) {
-        throw new Exception('Not logged in');
-    }
+// Ensure user is authenticated
+if (empty($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
 
-    $input = json_decode(file_get_contents("php://input"), true);
-    if (!$input) {
-        throw new Exception('Invalid JSON input');
-    }
+// Parse input (JSON body preferred)
+$raw = file_get_contents('php://input');
+$data = json_decode($raw, true);
+if (!is_array($data)) {
+    // Fallback to POST data
+    $data = [
+        'bookId' => $_POST['bookId'] ?? null,
+        'table'  => $_POST['table']  ?? null,
+    ];
+}
 
-    $required = ['bookId', 'table'];
-    foreach ($required as $field) {
-        if (empty($input[$field])) {
-            throw new Exception("Missing required field: $field");
-        }
-    }
+$userId = $_SESSION['user_id'];
+$bookId = trim($data['bookId'] ?? '');$table = trim($data['table'] ?? '');
 
-    $allowedTables = ['favorites', 'library', 'opencover', 'closedcover', 'dustyshelves'];
-    if (!in_array($input['table'], $allowedTables)) {
-        throw new Exception('Invalid table specified');
-    }
+// Validate inputs
+$allowedTables = ['favorites','library','opencover','closedcover','dustyshelves'];
+if (!$bookId || !in_array($table, $allowedTables, true)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid parameters']);
+    exit;
+}
 
-    $user_id = $_SESSION['user_id'];
-    $bookId = $input['bookId'];
-    $table = $input['table'];
+// Use prepared statements to prevent SQL injection
+$link->set_charset('utf8mb4');
 
-    // Check if book exists for user
-    $checkSql = "SELECT id FROM `$table` WHERE bookId = ? AND user_id = ?";
-    $stmt = $link->prepare($checkSql);
-    if (!$stmt) {
-        throw new Exception('Database query preparation failed');
-    }
-    $stmt->bind_param('si', $bookId, $user_id);
+// Check if the book is already in the user's table
+$checkSql = "SELECT 1 FROM `$table` WHERE `user_id` = ? AND `book_id` = ? LIMIT 1";
+if ($stmt = $link->prepare($checkSql)) {
+    $stmt->bind_param('is', $userId, $bookId);
     $stmt->execute();
-    $exists = $stmt->get_result()->num_rows > 0;
+    $stmt->store_result();
+    $exists = $stmt->num_rows > 0;
+    $stmt->close();
+} else {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database error']);
+    exit;
+}
+
+if ($exists) {
+    // Remove the book
+    $sql = "DELETE FROM `$table` WHERE `user_id` = ? AND `book_id` = ?";
+    $action = 'removed';
+} else {
+    // Add the book
+    $sql = "INSERT INTO `$table` (`user_id`,`book_id`,`added_at`) VALUES (?, ?, NOW())";
+    $action = 'added';
+}
+
+if ($stmt = $link->prepare($sql)) {
+    $stmt->bind_param('is', $userId, $bookId);
+    $stmt->execute();
     $stmt->close();
 
-    if ($exists) {
-        // Remove the book
-        $delete = $link->prepare("DELETE FROM `$table` WHERE bookId = ? AND user_id = ?");
-        $delete->bind_param('si', $bookId, $user_id);
-        $delete->execute();
-        echo json_encode(['status' => 'removed']);
-    } else {
-        // Add the book
-        $insert = $link->prepare("INSERT INTO `$table` 
-            (user_id, bookId) 
-            VALUES (?, ?, ?, ?, ?)");
-        $insert->bind_param('issss', 
-            $user_id,
-            $bookId,
-        );
-        $insert->execute();
-        echo json_encode(['status' => 'added']);
-    }
-
-} catch (Exception $e) {
-    error_log("Toggle Book Error: " . $e->getMessage());
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode([
+        'status' => $action,
+        'table'  => $table,
+        'bookId' => $bookId,
+    ]);
+} else {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database error']);
 }
+
+exit;
 ?>
