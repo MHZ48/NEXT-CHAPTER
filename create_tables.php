@@ -33,35 +33,35 @@ $userTable = "CREATE TABLE IF NOT EXISTS users (
     $favoritesTable = "CREATE TABLE IF NOT EXISTS `favorites` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `user_id` int(11) NOT NULL,
-    `bookId` varchar(255) NOT NULL,
+    `book_id` varchar(255) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (user_id) REFERENCES users(id)
     )";
     $libraryTable = "CREATE TABLE IF NOT EXISTS `library` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `user_id` int(11) NOT NULL,
-    `bookId` varchar(255) NOT NULL,
+    `book_id` varchar(255) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (user_id) REFERENCES users(id)
     )";
    $opencoverTable = "CREATE TABLE IF NOT EXISTS opencover (
    `id` INT(11) NOT NULL AUTO_INCREMENT,
     `user_id` INT(11) NOT NULL,
-    `bookId` varchar(255) NOT NULL,
+    `book_id` varchar(255) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 )";
     $closedcoverTable = "CREATE TABLE IF NOT EXISTS closedcover (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `user_id` INT(11) NOT NULL,
-    `bookId` varchar(255) NOT NULL,
+    `book_id` varchar(255) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 )";
     $dustyshelves = "CREATE TABLE IF NOT EXISTS dustyshelves (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `user_id` INT(11) NOT NULL,
-    `bookId` varchar(255) NOT NULL,
+    `book_id` varchar(255) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 )";
@@ -95,8 +95,8 @@ if (
 }
 
 /*$sql = "ALTER TABLE forgotpassword MODIFY `time` DATETIME NOT NULL";
-ALTER TABLE myfavorites ADD COLUMN bookId VARCHAR(255);
-ALTER TABLE mylibrary ADD COLUMN bookId VARCHAR(255);
+ALTER TABLE myfavorites ADD COLUMN book_id VARCHAR(255);
+ALTER TABLE mylibrary ADD COLUMN book_id VARCHAR(255);
 -- وهاكذا لباقي الجداول*/
 
 //$sql = "ALTER TABLE mydustyshelves ADD COLUMN book_Id VARCHAR(255)";
