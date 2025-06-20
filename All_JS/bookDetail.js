@@ -573,7 +573,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const payload = {
           table: tableName,
-          bookId: bookId, // هنا الإضافة المهمة
+          bookId: book_id, // هنا الإضافة المهمة
           title: book?.title || '',
           author: book?.authors?.join(', ') || '',
           thumbnail: image?.slice(0, 64)
@@ -628,7 +628,7 @@ function handleApiErrors(response) {
 
         const payload = {
           table: tableName,
-          bookId: bookId ,
+          bookId: book_id ,
           title: book?.title || '',
           author: book?.authors?.join(', ') || ''
         };
