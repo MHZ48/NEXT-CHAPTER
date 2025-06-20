@@ -591,7 +591,7 @@ function handleApiErrors(response) {
     return response.json();
 }
 
-  fetch('../All_JS/toggle_book.php', {
+  fetch('./toggle_book.php', {
    method: 'POST',
   headers: { 'Content-Type': 'application/json' },
     credentials: 'include',  // THIS LINE IS CRITICAL
