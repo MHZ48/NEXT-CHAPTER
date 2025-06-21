@@ -7,6 +7,10 @@
  * Expects JSON or form data with 'bookId' and 'table'.
  * Returns JSON { status: 'added'|'removed', table: string, bookId: string }.
  */
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 
 session_start();
 require_once '../connection.php';

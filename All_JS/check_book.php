@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 if (!isset($_SESSION['user_id'])) {
     die(json_encode(['error' => 'Authentication required']));
@@ -17,10 +21,7 @@ try {
     $allowedTables = ['library', 'favorites', 'opencover', 'closedcover', 'dustyshelves'];
     if (!$bookId || !$table || !in_array($table, $allowedTables)) {
         throw new Exception('Invalid input');
-    }
-
-    $user_id = 1; // Replace with actual user ID from session
-    
+    }    
     $query = "SELECT 1 FROM `$table` WHERE bookId = ? AND user_id = ?";
     $stmt = $link->prepare($query);
     if (!$stmt) {
