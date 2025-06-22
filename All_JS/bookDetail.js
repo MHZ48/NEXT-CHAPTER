@@ -574,9 +574,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const payload = {
           table: tableName,
           bookId: bookId, // هنا الإضافة المهمة
-          title: book?.title || '',
-          author: book?.authors?.join(', ') || '',
-          thumbnail: image?.slice(0, 64)
         };
 /*--------------------------------------------------------- */
 function handleApiErrors(response) {
@@ -629,8 +626,7 @@ function handleApiErrors(response) {
         const payload = {
           table: tableName,
           bookId: bookId ,
-          title: book?.title || '',
-          author: book?.authors?.join(', ') || ''
+
         };
 
         fetch('../All_JS/check_book.php', {
