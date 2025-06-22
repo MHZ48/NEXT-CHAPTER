@@ -3,28 +3,6 @@ let book = null;
 let image = '';
 
 document.addEventListener('DOMContentLoaded', function () {
-      // ===== STEP 5: ADD THIS CODE FIRST ===== //
-  fetch('../PHP/check_auth.php')
-        .then(response => response.json())
-        .then(data => {
-            if (!data.loggedIn) {
-                document.querySelectorAll('.toggle-button').forEach(btn => {
-                    btn.style.display = 'none';
-                });
-                showAlert('Please login to save books', 'warning');
-            }
-            // Continue loading book data
-            loadBookData();
-        });
-
-    function loadBookData() {
-        // Your original book loading code here
-        const urlParams = new URLSearchParams(window.location.search);
-        const bookId = urlParams.get('bookId');
-        // ... rest of your existing code
-    }
-
-/************** */
   function showAlert(message, type = 'success') {
     // Create a temporary wrapper
     const wrapper = document.createElement('div');
@@ -122,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (ratingEl && data.book_rating != null) {
     ratingEl.textContent = `${Number(data.book_rating).toFixed(1)}/5.0`;
   } else {
-    ratingEl.textContent = '0.0/5.0';
+    ratingEl.textContent = 'No rating';
   }
 })
 .catch(err => {
@@ -574,28 +552,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const payload = {
           table: tableName,
           bookId: bookId, // هنا الإضافة المهمة
+          title: book?.title || '',
+          authors: book?.authors?.join(', ') || '',
+          thumbnail: image?.slice(0, 64)
         };
-/*--------------------------------------------------------- */
-function handleApiErrors(response) {
-    if (!response.ok) {
-        return response.json().then(err => {
-            if (err.error === 'Not logged in') {
-                window.location.href = 'login.html';
-            }
-            throw new Error(err.error);
-        });
-    }
-    return response.json();
-}
 
-  fetch('../All_JS/toggle_book.php', {
-   method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',  // THIS LINE IS CRITICAL
-  body: JSON.stringify(payload)
-  })
-.then(res => res.text()) // grab raw text first
-.then(data => {
+        fetch('../All_JS/toggle_book.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+          .then(res => res.json())
+          .then(data => {
             if (data.status === 'added') {
               btn.classList.add('active');
               if (iconDefaultId && iconActiveId) {
@@ -609,29 +577,7 @@ function handleApiErrors(response) {
                 document.getElementById(iconActiveId)?.classList.add('hidden');
               }
             }
-          }
-/*.then(text => {
-  try {
-    const data = JSON.parse(text); // try parsing it
-    if (data.status === 'added') {
-      btn.classList.add('active');
-      if (iconDefaultId && iconActiveId) {
-        document.getElementById(iconDefaultId)?.classList.add('hidden');
-        document.getElementById(iconActiveId)?.classList.remove('hidden');
-      }
-    } else if (data.status === 'removed') {
-      btn.classList.remove('active');
-      if (iconDefaultId && iconActiveId) {
-        document.getElementById(iconDefaultId)?.classList.remove('hidden');
-        document.getElementById(iconActiveId)?.classList.add('hidden');
-      }
-    } else if (data.error) {
-      console.error("Server error:", data.error);
-    }
-  } catch (err) {
-    console.error("Invalid JSON or server error response:", text);
-  }
-}*/);
+          });
       }
       //دالة فحص حالة الزر عند تحميل الصفحة
       function checkToggleButtonState(buttonId, tableName, iconDefaultId = null, iconActiveId = null) {
@@ -640,8 +586,9 @@ function handleApiErrors(response) {
 
         const payload = {
           table: tableName,
-          bookId: bookId ,
-
+          bookId: bookId ,// هنا الإضافة المهمة
+          title: book?.title || '',
+          authors: book?.authors?.join(', ') || ''
         };
 
         fetch('../All_JS/check_book.php', {
@@ -665,30 +612,30 @@ function handleApiErrors(response) {
     const buttonConfigs = [
   { 
     id: 'favorite-button', 
-    table: 'favorites',
+    table: 'myfavorites',
     // Favorite uses fill color change, not SVG swap
   },
   { 
     id: 'library-toggle-button', 
-    table: 'library',
+    table: 'mylibrary',
     iconDefault: 'library-icon-default',
     iconActive: 'library-icon-active'
   },
   { 
     id: 'openCover-toggle-button', 
-    table: 'opencover',
+    table: 'myopencover',
     iconDefault: 'openCover-icon-default',
     iconActive: 'openCover-icon-active'
   },
   { 
     id: 'closedCover-toggle-button', 
-    table: 'closedcover',
+    table: 'myclosedcover',
     iconDefault: 'closedCover-icon-default',
     iconActive: 'closedCover-icon-active'
   },
   { 
     id: 'dustyShelves-toggle-button', 
-    table: 'dustyshelves',
+    table: 'mydustyshelves',
     iconDefault: 'dustyShelves-icon-default',
     iconActive: 'dustyShelves-icon-active'
   }
