@@ -612,30 +612,30 @@ document.addEventListener('DOMContentLoaded', function () {
     const buttonConfigs = [
   { 
     id: 'favorite-button', 
-    table: 'myfavorites',
+    table: 'favorites',
     // Favorite uses fill color change, not SVG swap
   },
   { 
     id: 'library-toggle-button', 
-    table: 'mylibrary',
+    table: 'library',
     iconDefault: 'library-icon-default',
     iconActive: 'library-icon-active'
   },
   { 
     id: 'openCover-toggle-button', 
-    table: 'myopencover',
+    table: 'opencover',
     iconDefault: 'openCover-icon-default',
     iconActive: 'openCover-icon-active'
   },
   { 
     id: 'closedCover-toggle-button', 
-    table: 'myclosedcover',
+    table: 'closedcover',
     iconDefault: 'closedCover-icon-default',
     iconActive: 'closedCover-icon-active'
   },
   { 
     id: 'dustyShelves-toggle-button', 
-    table: 'mydustyshelves',
+    table: 'dustyshelves',
     iconDefault: 'dustyShelves-icon-default',
     iconActive: 'dustyShelves-icon-active'
   }
