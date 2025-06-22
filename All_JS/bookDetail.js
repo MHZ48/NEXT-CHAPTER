@@ -595,7 +595,22 @@ function handleApiErrors(response) {
   body: JSON.stringify(payload)
   })
 .then(res => res.text()) // grab raw text first
-.then(text => {
+.then(data => {
+            if (data.status === 'added') {
+              btn.classList.add('active');
+              if (iconDefaultId && iconActiveId) {
+                document.getElementById(iconDefaultId)?.classList.add('hidden');
+                document.getElementById(iconActiveId)?.classList.remove('hidden');
+              }
+            } else if (data.status === 'removed') {
+              btn.classList.remove('active');
+              if (iconDefaultId && iconActiveId) {
+                document.getElementById(iconDefaultId)?.classList.remove('hidden');
+                document.getElementById(iconActiveId)?.classList.add('hidden');
+              }
+            }
+          }
+/*.then(text => {
   try {
     const data = JSON.parse(text); // try parsing it
     if (data.status === 'added') {
@@ -616,7 +631,7 @@ function handleApiErrors(response) {
   } catch (err) {
     console.error("Invalid JSON or server error response:", text);
   }
-});
+}*/);
       }
       //دالة فحص حالة الزر عند تحميل الصفحة
       function checkToggleButtonState(buttonId, tableName, iconDefaultId = null, iconActiveId = null) {
