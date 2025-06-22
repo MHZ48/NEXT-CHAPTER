@@ -28,21 +28,21 @@ if (!$user_id || !$title || !$author || !$thumbnail) {
 }
 
 // Toggle logic
-$stmt = $link->prepare("SELECT id FROM `$table` WHERE user_id = ? AND book_Id = ?");
-$stmt->bind_param("is", $user_id, $book_Id);
+$stmt = $link->prepare("SELECT id FROM `$table` WHERE user_id = ? AND book_id = ?");
+$stmt->bind_param("is", $user_id, $book_id);
 $stmt->execute();
 $res = $stmt->get_result();
 
 if ($res && $res->num_rows > 0) {
-    $del = $link->prepare("DELETE FROM `$table` WHERE user_id = ?  AND book_Id = ?");
-    $del->bind_param("is", $user_id, $book_Id);
+    $del = $link->prepare("DELETE FROM `$table` WHERE user_id = ?  AND book_id = ?");
+    $del->bind_param("is", $user_id, $book_id);
     $del->execute();
     http_response_code(200);
     echo json_encode(["status" => "removed"]);
     $del->close();
 } else {
-    $ins = $link->prepare("INSERT INTO `$table` (user_id, book_Id) VALUES (?,?)");
-    $ins->bind_param("issss", $user_id, $book_Id);
+    $ins = $link->prepare("INSERT INTO `$table` (user_id, book_id) VALUES (?,?)");
+    $ins->bind_param("issss", $user_id, $book_id);
     $ins->execute();
     http_response_code(300);
     echo json_encode(["status" => "added"]);
