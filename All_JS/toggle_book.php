@@ -1,92 +1,75 @@
 <?php
-/**
- * toggle_book.php
- *
- * Adds or removes a book from one of the user's lists:
- * favorites, library, opencover, closedcover, dustyshelves.
- * Expects JSON or form data with 'bookId' and 'table'.
- * Returns JSON { status: 'added'|'removed', table: string, bookId: string }.
- */
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
+//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 session_start();
 require_once '../connection.php';
+header("Content-Type: application/json");
 
-header('Content-Type: application/json');
+$input = json_decode(file_get_contents("php://input"), true);
+//file_put_contents('debug_toggle.txt', print_r($input, true), FILE_APPEND);
 
-// Ensure user is authenticated
-if (empty($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
+$table = $input['table'];
+$user_id = $_SESSION['user_id'];
+$book_id = $input['bookId'];
+$title = $input['title'] ?? '';
+$author = $input['authors'] ?? ''; // Use 'authors' from frontend, but insert into 'author'
+$thumbnail = $input['thumbnail'] ?? '';
 
-// Parse input (JSON body preferred)
-$raw = file_get_contents('php://input');
-$data = json_decode($raw, true);
-if (!is_array($data)) {
-    // Fallback to POST data
-    $data = [
-        'bookId' => $_POST['bookId'] ?? null,
-        'table'  => $_POST['table']  ?? null,
-    ];
-}
-
-$userId = $_SESSION['user_id'];
-$bookId = trim($data['bookId'] ?? '');$table = trim($data['table'] ?? '');
-
-// Validate inputs
-$allowedTables = ['favorites','library','opencover','closedcover','dustyshelves'];
-if (!$bookId || !in_array($table, $allowedTables, true)) {
+// Secure table whitelist
+$allowedTables = ['favorites', 'library', 'opencover', 'closedcover', 'dustyshelves'];
+if (!in_array($table, $allowedTables)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Invalid parameters']);
+    echo json_encode(['error' => 'Invalid table']);
     exit;
 }
 
-// Use prepared statements to prevent SQL injection
-$link->set_charset('utf8mb4');
-
-// Check if the book is already in the user's table
-$checkSql = "SELECT 1 FROM `$table` WHERE `user_id` = ? AND `book_id` = ? LIMIT 1";
-if ($stmt = $link->prepare($checkSql)) {
-    $stmt->bind_param('is', $userId, $bookId);
-    $stmt->execute();
-    $stmt->store_result();
-    $exists = $stmt->num_rows > 0;
-    $stmt->close();
-} else {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database error']);
+if (!$user_id || !$title || !$author || !$thumbnail) {
+    http_response_code(401);
+    echo json_encode(["error" => "Missing data"]);
     exit;
 }
 
-if ($exists) {
-    // Remove the book
-    $sql = "DELETE FROM `$table` WHERE `user_id` = ? AND `book_id` = ?";
-    $action = 'removed';
+// Toggle logic
+$stmt = $link->prepare("SELECT id FROM `$table` WHERE user_id = ? AND book_Id = ?");
+$stmt->bind_param("is", $user_id, $book_Id);
+$stmt->execute();
+$res = $stmt->get_result();
+
+if ($res && $res->num_rows > 0) {
+    $del = $link->prepare("DELETE FROM `$table` WHERE user_id = ?  AND book_Id = ?");
+    $del->bind_param("is", $user_id, $book_Id);
+    $del->execute();
+    http_response_code(200);
+    echo json_encode(["status" => "removed"]);
+    $del->close();
 } else {
-    // Add the book
-    $sql = "INSERT INTO `$table` (`user_id`,`book_id`,`added_at`) VALUES (?, ?, NOW())";
-    $action = 'added';
+    $ins = $link->prepare("INSERT INTO `$table` (user_id, title, author, thumbnail, book_Id) VALUES (?, ?, ?, ?, ?)");
+    $ins->bind_param("issss", $user_id, $title, $author, $thumbnail, $book_Id);
+    $ins->execute();
+    http_response_code(300);
+    echo json_encode(["status" => "added"]);
+    $ins->close();
 }
+$stmt->close();
+$link->close();
+/*session_start();
+require_once '../connection.php';
+header("Content-Type: application/json");
+$input = json_decode(file_get_contents("php://input"), true);
 
-if ($stmt = $link->prepare($sql)) {
-    $stmt->bind_param('is', $userId, $bookId);
-    $stmt->execute();
-    $stmt->close();
+$table = $input['table'];
+$user_id = $_SESSION['user_id'];
+$book_Id = $input['bookId'];
+$title = $input['title'] ?? '';
+$author = $input['authors'] ?? ''; // Use 'authors' from frontend, but insert into 'author'
+$thumbnail = $input['thumbnail'] ?? '';
 
-    echo json_encode([
-        'status' => $action,
-        'table'  => $table,
-        'bookId' => $bookId,
-    ]);
-} else {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database error']);
-}
+//echo "Table: $table, User ID: $user_id, Book ID: $book_Id, Title: $title, Author: $author, Thumbnail: $thumbnail\n";
 
-exit;
+//$sql = "INSERT INTO `$table` (user_id, title, author, thumbnail, book_Id) VALUES ('$user_id', '$title', '$author', '$thumbnail', '$book_Id') ";
+$query = "INSERT INTO `$table` (user_id, title, author, thumbnail, book_Id) VALUES ($user_id, '$title', '$author', '$thumbnail', '$book_Id') ";
+$result = mysqli_query($link, $query);
+http_response_code(202);
+echo json_encode(["status" => "added"]);*/
+
 ?>
