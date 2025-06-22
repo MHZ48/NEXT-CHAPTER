@@ -552,9 +552,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const payload = {
           table: tableName,
           bookId: bookId, // هنا الإضافة المهمة
-          title: book?.title || '',
-          authors: book?.authors?.join(', ') || '',
-          thumbnail: image?.slice(0, 64)
+         
         };
 
         fetch('../All_JS/toggle_book.php', {
@@ -587,8 +585,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const payload = {
           table: tableName,
           bookId: bookId ,// هنا الإضافة المهمة
-          title: book?.title || '',
-          authors: book?.authors?.join(', ') || ''
+         
         };
 
         fetch('../All_JS/check_book.php', {

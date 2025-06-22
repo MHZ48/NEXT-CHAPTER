@@ -11,9 +11,7 @@ $input = json_decode(file_get_contents("php://input"), true);
 $table = $input['table'];
 $user_id = $_SESSION['user_id'];
 $book_id = $input['bookId'];
-$title = $input['title'] ?? '';
-$author = $input['authors'] ?? ''; // Use 'authors' from frontend, but insert into 'author'
-$thumbnail = $input['thumbnail'] ?? '';
+
 
 // Secure table whitelist
 $allowedTables = ['favorites', 'library', 'opencover', 'closedcover', 'dustyshelves'];
@@ -43,8 +41,8 @@ if ($res && $res->num_rows > 0) {
     echo json_encode(["status" => "removed"]);
     $del->close();
 } else {
-    $ins = $link->prepare("INSERT INTO `$table` (user_id, title, author, thumbnail, book_Id) VALUES (?, ?, ?, ?, ?)");
-    $ins->bind_param("issss", $user_id, $title, $author, $thumbnail, $book_Id);
+    $ins = $link->prepare("INSERT INTO `$table` (user_id, book_Id) VALUES (?,?)");
+    $ins->bind_param("issss", $user_id, $book_Id);
     $ins->execute();
     http_response_code(300);
     echo json_encode(["status" => "added"]);
