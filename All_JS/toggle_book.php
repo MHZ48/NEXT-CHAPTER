@@ -21,7 +21,7 @@ if (!in_array($table, $allowedTables)) {
     exit;
 }
 
-if (!$user_id || !$title || !$author || !$thumbnail) {
+if (!$user_id) {
     http_response_code(401);
     echo json_encode(["error" => "Missing data"]);
     exit;
@@ -42,7 +42,7 @@ if ($res && $res->num_rows > 0) {
     $del->close();
 } else {
     $ins = $link->prepare("INSERT INTO `$table` (user_id, book_id) VALUES (?,?)");
-    $ins->bind_param("issss", $user_id, $book_id);
+    $ins->bind_param("is", $user_id, $book_id);
     $ins->execute();
     http_response_code(300);
     echo json_encode(["status" => "added"]);

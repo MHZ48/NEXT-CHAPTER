@@ -602,7 +602,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById(iconActiveId)?.classList.remove('hidden');
               }
             }
-          });
+          }
+        );
       }
 
       // Bind all buttons
@@ -646,7 +647,3 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 });
-
-
-
-
